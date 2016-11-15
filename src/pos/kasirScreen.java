@@ -1,6 +1,7 @@
 package pos;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,13 +13,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 public class kasirScreen extends JFrame{
 	
 	//date 
 	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	DateFormat idateFormat = new SimpleDateFormat("ddMMyyyy/HHmm/");
+	DateFormat idateFormat = new SimpleDateFormat("ddMMyyyy/HHmm");
 	Date date = new Date();
 	String inv="";
 	//end date
@@ -60,6 +65,27 @@ public class kasirScreen extends JFrame{
 	JButton flatPrint= new JButton("Print",new ImageIcon("images/print.png"));
 	
 	
+	// Tabel tabel 
+	String header [] = {"No","Kode Barang","Nama Barang","Jumlah Barang","Harga Satuan","Subtotal"};
+	String data [][] = {{"1","009421","Aqua","10","5000","50000"},
+						{"2","039124","Kecap","10","5000","50000"},
+						{"3","009220","mijone","3","1200","50200"}
+	};
+	
+	DefaultTableModel model = new DefaultTableModel(data,header);
+	JTable table = new JTable(model);
+	
+	JScrollPane pane = new JScrollPane(table);
+	TableColumn tc1 = new TableColumn();
+	TableColumn tc2 = new TableColumn();;
+	TableColumn tc3 = new TableColumn();
+	TableColumn tc4 = new TableColumn();
+	TableColumn tc5 = new TableColumn();
+	TableColumn tc6 = new TableColumn();
+	
+	Dimension dim = new Dimension(15, 2);
+	
+	//end tabel
 	
 	public kasirScreen() {
 		setSize(1200,700);
@@ -74,15 +100,16 @@ public class kasirScreen extends JFrame{
 	public String getInpoice(){
 		String head = "INV/";
 		String teng = idateFormat.format(date);
-		int end=0;
-		end++;
-		String inv= head+teng+end;
+		String inv= head+teng;
 		return inv;
 	}
 	public void setInpoice(String i){
 		this.inv=i;
 	}
-	
+	void setTinggi(JTable table){
+		int tinggi = table.getRowHeight();
+		table.setRowHeight(tinggi+15);
+	}
 	void kom(){
 		
 		getContentPane().setLayout(null);
@@ -104,6 +131,27 @@ public class kasirScreen extends JFrame{
 		getContentPane().add(flatSave);
 		getContentPane().add(flatcancel);
 		getContentPane().add(flatPrint);
+		getContentPane().add(pane);
+		
+		
+		//tabel
+		pane.setBounds(250, 150, 800, 400);
+		table.setShowGrid(true);
+		table.setShowVerticalLines(true);
+		table.setIntercellSpacing(new Dimension(dim));
+		table.setGridColor(d);
+		table.setEnabled(false);;
+		setTinggi(table);
+		tc1 = table.getColumnModel().getColumn(0);
+		tc2 = table.getColumnModel().getColumn(1);
+		tc3 = table.getColumnModel().getColumn(2);
+		tc4 = table.getColumnModel().getColumn(3);
+		tc5 = table.getColumnModel().getColumn(4);
+		tc6 = table.getColumnModel().getColumn(5);
+		
+		//end tabel
+		
+		//method setTinggi()
 		
 		
 		lidTransaksi.setBounds(170, 100, 80, 25);
@@ -207,6 +255,16 @@ public class kasirScreen extends JFrame{
 		stock.setIcon(new ImageIcon("images/1/chart.png"));
 		stock.setRolloverIcon(new ImageIcon("images/2/chart.png"));
 		stock.setPressedIcon(new ImageIcon("images/3/chart.png"));
+		stock.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				inputBarangScreen ah = new inputBarangScreen();
+				ah.kom();
+				dispose();
+			}
+			
+		});
 
 		
 		//report button

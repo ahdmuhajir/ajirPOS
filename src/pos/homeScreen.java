@@ -83,6 +83,16 @@ public class homeScreen extends JFrame{
 		stock.setIcon(new ImageIcon("images/1/chart.png"));
 		stock.setRolloverIcon(new ImageIcon("images/2/chart.png"));
 		stock.setPressedIcon(new ImageIcon("images/3/chart.png"));
+		stock.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				inputBarangScreen ah = new inputBarangScreen();
+				ah.kom();
+				dispose();
+			}
+			
+		});
 
 		
 		//report button
