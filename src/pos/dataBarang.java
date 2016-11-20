@@ -19,8 +19,39 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class inputBarangScreen extends JFrame{
-	//date 
+public class dataBarang extends JFrame{
+		JLabel lkdbarang = new JLabel("KD Barang");
+		JLabel lnmbarang = new JLabel("Nama Barang");
+		JLabel lhrgjual = new JLabel("Harga Jual");
+		JLabel lhrgbeli= new JLabel("Harga Beli");
+		JLabel lstock = new JLabel("Stock");
+		
+		JTextField kdbarang = new JTextField();
+		JTextField nmbarang = new JTextField();
+		JTextField hrgjual = new JTextField();
+		JTextField hrgbeli = new JTextField();
+		JTextField stokbrang = new JTextField();
+		
+		void idatabarang(){
+			getContentPane().add(lkdbarang);
+			getContentPane().add(lnmbarang);
+			getContentPane().add(lhrgjual);
+			getContentPane().add(lhrgbeli);
+			getContentPane().add(lstock);
+			getContentPane().add(kdbarang);
+			getContentPane().add(nmbarang);
+			getContentPane().add(hrgjual);
+			getContentPane().add(hrgbeli);
+			getContentPane().add(stokbrang);
+			
+			lkodebarang.setBounds(200, 70, 100, 20);
+			lnmbarang.setBounds(200, 110, 100, 20);
+			lhrgjual.setBounds(200, 150, 100, 20);
+			lhrgbeli.setBounds(200, 190, 100, 20);
+			lstock.setBounds(200, 230, 100, 20);
+		}
+	
+		//date 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		DateFormat idateFormat = new SimpleDateFormat("ddMMyyyy/HHmm");
 		Date date = new Date();
@@ -39,7 +70,7 @@ public class inputBarangScreen extends JFrame{
 		
 		JLabel bg = new JLabel(new ImageIcon("images/bg.jpg"));
 		
-		JLabel namaAplikasi= new JLabel("Halaman Inventory");
+		JLabel namaAplikasi= new JLabel("Halaman Data Barang");
 		JLabel tblScreen= new JLabel(new ImageIcon("images/table.png"));
 		JLabel bgButt= new JLabel(new ImageIcon("images/bgButt.png"));
 		Font dfont = new Font("Roboto", Font.TRUETYPE_FONT, 12);
@@ -65,10 +96,19 @@ public class inputBarangScreen extends JFrame{
 		
 		
 		// Tabel tabel 
-		String header [] = {"No","Kode Barang","Nama Barang","Jumlah Barang","Harga Satuan","Subtotal"};
-		String data [][] = {{"1","009421","Aqua","10","5000","50000"},
-							{"2","039124","Kecap","10","5000","50000"},
-							{"3","009220","mijone","3","1200","50200"}
+		String header [] = {"No","Kode Barang","Nama Barang","Harga Jual","Harga Beli","Stock"};
+		String data [][] = {{"1","009421","Aqua","11000","10000","100"},
+							{"2","039124","Kecap","12000","1000","120"},
+							{"3","009220","mijone","11000","9000","50"},
+							{"4","004421","Aqua","11000","10000","100"},
+							{"5","039224","indomiw","12000","1000","120"},
+							{"6","00220","sarimi","11000","9000","50"},
+							{"1","009421","Aqua","11000","10000","100"},
+							{"2","039124","Kecap","12000","1000","120"},
+							{"3","009220","mijone","11000","9000","50"},
+							{"4","004421","Aqua","11000","10000","100"},
+							{"5","039224","indomiw","12000","1000","120"},
+							{"6","00220","sarimi","11000","9000","50"}
 		};
 		
 		DefaultTableModel model = new DefaultTableModel(data,header);
@@ -86,13 +126,13 @@ public class inputBarangScreen extends JFrame{
 		
 		//end tabel
 		
-	 public inputBarangScreen() {
+	 public dataBarang() {
 			setSize(1200,700);
 			setLocation(65,35);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setResizable(false);
 			setVisible(true);
-			setTitle("Halaman Inventory");
+			setTitle("Halaman Data Barang");
 
 		}
 		
@@ -102,14 +142,12 @@ public class inputBarangScreen extends JFrame{
 			String inv= head+teng;
 			return inv;
 		}
-		public void setInpoice(String i){
-			this.inv=i;
-		}
+		
 		void setTinggi(JTable table){
 			int tinggi = table.getRowHeight();
 			table.setRowHeight(tinggi+15);
 		}
-		void kom(){
+		void komponenVisual(){
 			
 			getContentPane().setLayout(null);
 			getContentPane().setBackground(c);
@@ -134,7 +172,7 @@ public class inputBarangScreen extends JFrame{
 			
 			
 			//tabel
-			pane.setBounds(250, 150, 800, 400);
+			pane.setBounds(250, 350, 800, 200);
 			table.setShowGrid(true);
 			table.setShowVerticalLines(true);
 			table.setIntercellSpacing(new Dimension(dim));
@@ -153,13 +191,14 @@ public class inputBarangScreen extends JFrame{
 			//method setTinggi()
 			
 			
-			ltgl.setBounds(500, 100, 80, 25);
+			/*ltgl.setBounds(500, 100, 80, 25);
 			txTgl.setBounds(560, 100, 200, 25);
 			txTgl.setBorder(null);
 			txTgl.setText(dateFormat.format(date));
 			txTgl.setEditable(false);
 			txTgl.setAlignmentX(CENTER_ALIGNMENT);
 			txTgl.setHorizontalAlignment(JTextField.CENTER);
+			*/
 			
 			flatbut.setBounds(1050, 600, 100, 30);
 			flatbut.setForeground(Color.WHITE);
@@ -256,8 +295,8 @@ public class inputBarangScreen extends JFrame{
 
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					inputBarangScreen ah = new inputBarangScreen();
-					ah.kom();
+					dataBarang ah = new dataBarang();
+					ah.komponenVisual();
 					dispose();
 				}
 				
@@ -322,9 +361,9 @@ public class inputBarangScreen extends JFrame{
 		
 		}
 	public static void main(String[] args) {
-		inputBarangScreen ib = new inputBarangScreen();
-		ib.setTitle("Form Input Barang");
-		ib.kom();
+		dataBarang ib = new dataBarang();
+		ib.komponenVisual();
+		ib.idatabarang();
 		
 	}
 

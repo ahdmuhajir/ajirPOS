@@ -149,6 +149,7 @@ public class kasirScreen extends JFrame{
 		tc5 = table.getColumnModel().getColumn(4);
 		tc6 = table.getColumnModel().getColumn(5);
 		
+		
 		//end tabel
 		
 		//method setTinggi()
@@ -259,8 +260,8 @@ public class kasirScreen extends JFrame{
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				inputBarangScreen ah = new inputBarangScreen();
-				ah.kom();
+				dataBarang ah = new dataBarang();
+				ah.komponenVisual();
 				dispose();
 			}
 			

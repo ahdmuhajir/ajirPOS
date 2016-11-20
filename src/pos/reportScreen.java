@@ -288,8 +288,8 @@ public class reportScreen extends JFrame{
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				inputBarangScreen ah = new inputBarangScreen();
-				ah.kom();
+				dataBarang ah = new dataBarang();
+				ah.komponenVisual();
 				dispose();
 			}
 			
