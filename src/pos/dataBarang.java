@@ -22,8 +22,8 @@ import javax.swing.table.TableColumn;
 public class dataBarang extends JFrame{
 		JLabel lkdbarang = new JLabel("KD Barang");
 		JLabel lnmbarang = new JLabel("Nama Barang");
-		JLabel lhrgjual = new JLabel("Harga Jual");
-		JLabel lhrgbeli= new JLabel("Harga Beli");
+		JLabel lhrgjual = new JLabel("Harga Jual (Rp.)");
+		JLabel lhrgbeli= new JLabel("Harga Beli (Rp.)");
 		JLabel lstock = new JLabel("Stock");
 		
 		JTextField kdbarang = new JTextField();
@@ -49,6 +49,19 @@ public class dataBarang extends JFrame{
 			lhrgjual.setBounds(200, 150, 100, 20);
 			lhrgbeli.setBounds(200, 190, 100, 20);
 			lstock.setBounds(200, 230, 100, 20);
+			kdbarang.setBounds(400, 70, 200, 25);
+			nmbarang.setBounds(400, 110, 200, 25);
+			hrgjual.setBounds(400, 150, 200, 25);
+			hrgbeli.setBounds(400, 190, 200, 25);
+			stokbrang.setBounds(400, 230, 200, 25);
+			
+			kdbarang.setBorder(null);
+			nmbarang.setBorder(null);
+			hrgjual.setBorder(null);
+			hrgbeli.setBorder(null);
+			stokbrang.setBorder(null);
+			
+			
 		}
 	
 		//date 
@@ -172,7 +185,7 @@ public class dataBarang extends JFrame{
 			
 			
 			//tabel
-			pane.setBounds(250, 350, 800, 200);
+			pane.setBounds(200, 350, 800, 200);
 			table.setShowGrid(true);
 			table.setShowVerticalLines(true);
 			table.setIntercellSpacing(new Dimension(dim));
@@ -200,36 +213,36 @@ public class dataBarang extends JFrame{
 			txTgl.setHorizontalAlignment(JTextField.CENTER);
 			*/
 			
-			flatbut.setBounds(1050, 600, 100, 30);
+			/*flatbut.setBounds(1050, 300, 100, 30);
 			flatbut.setForeground(Color.WHITE);
 			flatbut.setBackground(d);
 			flatbut.setBorder(null);
 			flatbut.setBorderPainted(false);
-			flatbut.setFocusPainted(false);
+			flatbut.setFocusPainted(false);*/
 			
 			
-			flatSave.setBounds(940, 600, 100, 30);
+			flatSave.setBounds(940, 300, 100, 30);
 			flatSave.setForeground(Color.WHITE);
 			flatSave.setBackground(d);
 			flatSave.setBorder(null);
 			flatSave.setBorderPainted(false);
 			flatSave.setFocusPainted(false);
 			
-			flatcancel.setBounds(830, 600, 100, 30);
+			flatcancel.setBounds(830, 300, 100, 30);
 			flatcancel.setForeground(Color.WHITE);
 			flatcancel.setBackground(d);
 			flatcancel.setBorder(null);
 			flatcancel.setBorderPainted(false);
 			flatcancel.setFocusPainted(false);
 			
-			flatBaru.setBounds(720, 600, 100, 30);
+			flatBaru.setBounds(720, 300, 100, 30);
 			flatBaru.setForeground(Color.WHITE);
 			flatBaru.setBackground(d);
 			flatBaru.setBorder(null);
 			flatBaru.setBorderPainted(false);
 			flatBaru.setFocusPainted(false);
 			
-			flatPrint.setBounds(610, 600, 100, 30);
+			flatPrint.setBounds(610, 300, 100, 30);
 			flatPrint.setForeground(Color.WHITE);
 			flatPrint.setBackground(d);
 			flatPrint.setBorder(null);
