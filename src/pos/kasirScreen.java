@@ -3,8 +3,15 @@ package pos;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -21,8 +29,10 @@ import javax.swing.table.TableColumn;
 
 public class kasirScreen extends JFrame{
 	
+	JButton add= new JButton(new ImageIcon("images/search.png"));
+	
 	//date 
-	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	DateFormat idateFormat = new SimpleDateFormat("ddMMyyyy/HHmm");
 	Date date = new Date();
 	String inv="";
@@ -49,28 +59,31 @@ public class kasirScreen extends JFrame{
 	// kasir screen
 	JLabel lidTransaksi = new JLabel("Invoice");
 	JLabel ltgl = new JLabel("Tanggal");
-	JLabel lkodebarang = new JLabel("Kode Barang");
-	JLabel totalharga = new JLabel("");
+	JLabel lkodebarang = new JLabel("Kd Barang");
+	JLabel totalharga = new JLabel("Total");
+	JLabel bayar = new JLabel("Bayar");
+	JLabel kembalian= new JLabel("Kembali");
+	
 	
 	JTextField txidTransaksi= new JTextField();
 	JTextField txTgl= new JTextField();
 	JTextField txKoderang= new JTextField();
+	JTextField txTotal= new JTextField();
+	JTextField  txBayar =new JTextField();
+	JTextField  txkembalian= new JTextField();	
 	
-	
-	JButton cBarang= new JButton("...");
+	JTextField cBarang= new JTextField();
 	JButton flatSave=new JButton("Simpan",new ImageIcon("images/save.png"));
-	JButton flatbut= new JButton("Bayar",new ImageIcon("images/btc.png"));
+	JButton flatbut= new JButton("Bayar",new ImageIcon("images/bbtc.png"));
 	JButton flatcancel= new JButton("Reset",new ImageIcon("images/cancel.png"));
-	JButton flatBaru= new JButton("Baru",new ImageIcon("images/new.png"));
+	JButton flatBaru= new JButton("Hitung",new ImageIcon("images/new.png"));
 	JButton flatPrint= new JButton("Print",new ImageIcon("images/print.png"));
 	
 	
 	// Tabel tabel 
-	String header [] = {"No","Kode Barang","Nama Barang","Jumlah Barang","Harga Satuan","Subtotal"};
-	String data [][] = {{"1","009421","Aqua","10","5000","50000"},
-						{"2","039124","Kecap","10","5000","50000"},
-						{"3","009220","mijone","3","1200","50200"}
-	};
+	String header [] = {"Kode Barang","Nama Barang","Jumlah Barang","Harga Satuan","Subtotal"};
+	String data [][] ;
+
 	
 	DefaultTableModel model = new DefaultTableModel(data,header);
 	JTable table = new JTable(model);
@@ -81,7 +94,7 @@ public class kasirScreen extends JFrame{
 	TableColumn tc3 = new TableColumn();
 	TableColumn tc4 = new TableColumn();
 	TableColumn tc5 = new TableColumn();
-	TableColumn tc6 = new TableColumn();
+	
 	
 	Dimension dim = new Dimension(15, 2);
 	
@@ -95,6 +108,92 @@ public class kasirScreen extends JFrame{
 		setVisible(true);
 		setTitle("Aplikasi Point Of Sale");
 
+	}
+	
+	public void act(){
+		flatSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
+					String sql = "insert into penjualan values(?,?,?,?,?)";
+					PreparedStatement pr = connection.prepareStatement(sql);
+					pr.setString(1, txidTransaksi.getText());
+					pr.setString(2, txTgl.getText());
+					pr.setString(3, txTotal.getText());
+					pr.setString(4, txBayar.getText());
+					pr.setString(5, txkembalian.getText());
+					pr.executeUpdate();
+					JOptionPane.showMessageDialog(null, "Transaksi Berhasil Disimpan","Pesan",JOptionPane.INFORMATION_MESSAGE);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null,ex,"Error",JOptionPane.INFORMATION_MESSAGE);
+				}
+				
+			}
+		});
+		flatcancel.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent oah) {
+				txKoderang.setText("");
+				cBarang.setText("");
+				txBayar.setText("");
+				txTotal.setText("");
+				txkembalian.setText("");
+				int bbar=model.getRowCount();
+				for (int i = bbar-1; i >=0; i--) {
+					model.removeRow(i);
+				}
+				
+			}
+		});
+		flatBaru.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent xx) {
+				int x = Integer.parseInt(txBayar.getText())-Integer.parseInt(txTotal.getText());
+				txkembalian.setText(x+"");
+				
+			}
+		});
+		add.addActionListener(new ActionListener() {
+			
+			
+			public void actionPerformed(ActionEvent e) {
+				String c = txKoderang.getText();
+				String d= cBarang.getText();
+				try {
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
+					Statement statement = connection.createStatement();
+					String sql = "select kodebarang,namabarang,hrgjual from barang where kodebarang='"+c+"'";
+					ResultSet rs= statement.executeQuery(sql);
+					while(rs.next()){
+						
+						Object obj []=new Object[5];
+						obj [0] = rs.getString(1);
+						obj [1] = rs.getString(2);
+						obj [2] = d;
+						obj [3] = rs.getString(3);
+						int kal=Integer.parseInt(d)*Integer.valueOf((String) obj[3]);
+						obj [4] = kal;					
+						model.addRow(obj);
+						//int temp=kal;
+						int total = 0;
+						for (int i = 0; i < table.getRowCount(); i++) {
+							
+							int Amount = Integer.parseInt(table.getValueAt(i, 4)+"");
+					        total = Amount+total;
+					        txTotal.setText(Integer.toString(total));
+						}
+						
+					}
+				} catch (Exception em) {
+					System.out.println(em);
+				}
+				
+			}
+		});
 	}
 	
 	public String getInpoice(){
@@ -132,10 +231,32 @@ public class kasirScreen extends JFrame{
 		getContentPane().add(flatcancel);
 		getContentPane().add(flatPrint);
 		getContentPane().add(pane);
+		getContentPane().add(bayar);
+		getContentPane().add(kembalian);
+		getContentPane().add(txTotal);
+		getContentPane().add(txBayar);
+		getContentPane().add(txkembalian);
+		getContentPane().add(add);
 		
+	
+		
+		// bayar,total,kembalian
+		
+		totalharga.setBounds(170, 500, 80, 25);
+		txTotal.setBounds(250, 500, 200, 25);
+		txTotal.setBorder(null);
+		
+		bayar.setBounds(490, 500, 80, 25);
+		txBayar.setBounds(550, 500, 200, 25);
+		txBayar.setBorder(null);
+		
+		kembalian.setBounds(780, 500, 200, 25);
+		txkembalian.setBounds(850, 500, 200, 25);
+		txkembalian.setBorder(null);
+		// bayar,total,kembalian
 		
 		//tabel
-		pane.setBounds(250, 150, 800, 400);
+		pane.setBounds(250, 150, 800, 300);
 		table.setShowGrid(true);
 		table.setShowVerticalLines(true);
 		table.setIntercellSpacing(new Dimension(dim));
@@ -147,7 +268,7 @@ public class kasirScreen extends JFrame{
 		tc3 = table.getColumnModel().getColumn(2);
 		tc4 = table.getColumnModel().getColumn(3);
 		tc5 = table.getColumnModel().getColumn(4);
-		tc6 = table.getColumnModel().getColumn(5);
+
 		
 		
 		//end tabel
@@ -162,35 +283,35 @@ public class kasirScreen extends JFrame{
 		txidTransaksi.setText(getInpoice());
 		txidTransaksi.setEditable(false);
 		txidTransaksi.setHorizontalAlignment(JTextField.CENTER);
-		ltgl.setBounds(500, 100, 80, 25);
-		txTgl.setBounds(560, 100, 200, 25);
+		ltgl.setBounds(490, 100, 80, 25);
+		txTgl.setBounds(550, 100, 200, 25);
 		txTgl.setBorder(null);
 		txTgl.setText(dateFormat.format(date));
 		txTgl.setEditable(false);
-		lkodebarang.setBounds(800, 100, 80, 25);
-		txKoderang.setBounds(880, 100, 200, 25);
+		lkodebarang.setBounds(780, 100, 80, 25);
+		txKoderang.setBounds(850, 100, 200, 25);
 		txKoderang.setBorder(null);
-		cBarang.setBounds(1090, 100, 50, 25);
+		cBarang.setBounds(1060, 100, 50, 25);
 		cBarang.setBorder(null);
 		txTgl.setAlignmentX(CENTER_ALIGNMENT);
 		txTgl.setHorizontalAlignment(JTextField.CENTER);
+		add.setBounds(1060, 130, 50, 30);
 		
-		flatbut.setBounds(1050, 600, 100, 30);
+		flatbut.setBounds(940, 600, 100, 30);
 		flatbut.setForeground(Color.WHITE);
 		flatbut.setBackground(d);
 		flatbut.setBorder(null);
 		flatbut.setBorderPainted(false);
 		flatbut.setFocusPainted(false);
 		
-		
-		flatSave.setBounds(940, 600, 100, 30);
+		flatSave.setBounds(830, 600, 100, 30);
 		flatSave.setForeground(Color.WHITE);
 		flatSave.setBackground(d);
 		flatSave.setBorder(null);
 		flatSave.setBorderPainted(false);
 		flatSave.setFocusPainted(false);
 		
-		flatcancel.setBounds(830, 600, 100, 30);
+		flatcancel.setBounds(610, 600, 100, 30);
 		flatcancel.setForeground(Color.WHITE);
 		flatcancel.setBackground(d);
 		flatcancel.setBorder(null);
@@ -204,51 +325,30 @@ public class kasirScreen extends JFrame{
 		flatBaru.setBorderPainted(false);
 		flatBaru.setFocusPainted(false);
 		
-		flatPrint.setBounds(610, 600, 100, 30);
+		flatPrint.setBounds(1050, 600, 100, 30);
 		flatPrint.setForeground(Color.WHITE);
 		flatPrint.setBackground(d);
 		flatPrint.setBorder(null);
 		flatPrint.setBorderPainted(false);
 		flatPrint.setFocusPainted(false);
-		
-		//home button
-		getContentPane().add(home);
-		home.setToolTipText("Home");
-		home.setBounds(0, 0, 100, 100);
-		home.setOpaque(false);
-		home.setFocusPainted(false);
-		home.setContentAreaFilled(false);
-		home.setBorder(null);
-		home.setIcon(new ImageIcon("images/1/home.png"));
-		home.setRolloverIcon(new ImageIcon("images/2/home.png"));
-		home.setPressedIcon(new ImageIcon("images/3/home.png"));
-		home.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				homeScreen au = new homeScreen();
-				dispose();
-			}
-			
-		});
-
 		//pay button
 		getContentPane().add(pay);
 		pay.setToolTipText("Bayar");
-		pay.setBounds(0, 100, 100, 100);
+		pay.setBounds(0, 0, 100, 100);
 		pay.setOpaque(false);
 		pay.setFocusPainted(false);
 		pay.setContentAreaFilled(false);
 		pay.setBorder(null);
-		pay.setIcon(new ImageIcon("images/1/pay.png"));
+		pay.setIcon(new ImageIcon("images/1/pay-a.png"));
 		pay.setRolloverIcon(new ImageIcon("images/2/pay.png"));
 		pay.setPressedIcon(new ImageIcon("images/3/pay.png"));
+		
 		//getContentPane().add(appName);
 		//appName.setBounds(0,0,75,75);
 		
 		//stock button
 		getContentPane().add(stock);
-		stock.setBounds(0, 200, 100, 100);
+		stock.setBounds(0, 100, 100, 100);
 		stock.setOpaque(false);
 		stock.setFocusPainted(false);
 		stock.setContentAreaFilled(false);
@@ -262,15 +362,15 @@ public class kasirScreen extends JFrame{
 			public void mouseClicked(MouseEvent e) {
 				dataBarang ah = new dataBarang();
 				ah.komponenVisual();
+				ah.action();
 				dispose();
 			}
 			
 		});
-
 		
 		//report button
 		getContentPane().add(report);
-		report.setBounds(0, 300, 100, 100);
+		report.setBounds(0, 200, 100, 100);
 		report.setOpaque(false);
 		report.setFocusPainted(false);
 		report.setContentAreaFilled(false);
@@ -278,19 +378,18 @@ public class kasirScreen extends JFrame{
 		report.setIcon(new ImageIcon("images/1/report.png"));
 		report.setRolloverIcon(new ImageIcon("images/2/report.png"));
 		report.setPressedIcon(new ImageIcon("images/3/report.png"));
+		report.addMouseListener(new MouseAdapter() {
 
-		
-		//setting button
-	/*	getContentPane().add(setting);
-		setting.setBounds(0, 400, 100, 100);
-		setting.setOpaque(false);
-		setting.setFocusPainted(false);
-		setting.setContentAreaFilled(false);
-		setting.setBorder(null);
-		setting.setIcon(new ImageIcon("images/1/setting.png"));
-		setting.setRolloverIcon(new ImageIcon("images/2/setting.png"));
-		setting.setPressedIcon(new ImageIcon("images/3/setting.png"));*/
-		
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				reportScreen ad= new reportScreen();
+				ad.kom();
+				dispose();
+			}
+			
+		});
+
+
 		//quit button
 		getContentPane().add(quit);
 		quit.setBounds(0, 570, 100, 100);
@@ -331,6 +430,7 @@ public class kasirScreen extends JFrame{
 	public static void main(String[] args) {
 		kasirScreen anu = new kasirScreen();
 		anu.kom();
+		anu.act();
 		
 	}
 }
