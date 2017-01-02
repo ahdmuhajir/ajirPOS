@@ -50,7 +50,6 @@ public class dataBarang extends JFrame{
 		JTextField stokbrang = new JTextField();
 		JTextField suplier = new JTextField();
 		JTextArea txKet = new JTextArea(3,20);
-	
 		//date 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat idateFormat = new SimpleDateFormat("ddMMyyyy/HHmm");
