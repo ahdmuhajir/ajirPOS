@@ -92,11 +92,11 @@ public class dataBarang extends JFrame{
 		JButton flatbut= new JButton("Bayar",new ImageIcon("images/btc.png"));
 		JButton batal= new JButton("Reset",new ImageIcon("images/cancel.png"));
 		JButton edit= new JButton("Edit",new ImageIcon("images/new.png"));
-		JButton save= new JButton("Tambah",new ImageIcon("images/print.png"));
+		JButton save= new JButton("Tambah",new ImageIcon("images/print.pngg"));
 		
 		
 		// Tabel tabel 
-		String header [] = {"Kode Barang","Nama Barang","Harga Jual","Harga Beli","Stock","Suplier","Ket"};
+		String header [] = {"Kode Barang","Nama Barang","Harga Jual","Harga Beli","Stock","Suplier","Ket","Untung"};
 		
 		
 		DefaultTableModel model = new DefaultTableModel(null,header);
@@ -110,6 +110,7 @@ public class dataBarang extends JFrame{
 		TableColumn tc5 = new TableColumn();
 		TableColumn tc6 = new TableColumn();
 		TableColumn tc7 = new TableColumn();
+		TableColumn tc8 = new TableColumn();
 		
 		Dimension dim = new Dimension(15, 2);
 		
@@ -174,10 +175,11 @@ public class dataBarang extends JFrame{
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					System.out.println(d);
 					try {
 						Class.forName("com.mysql.jdbc.Driver").newInstance();
 						Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
-						String sql = "insert into barang values(?,?,?,?,?,?,?,?)";
+						String sql = "insert into barang values(?,?,?,?,?,?,?,?,?)";
 						PreparedStatement pr = connection.prepareStatement(sql);
 						pr.setString(1, kdbarang.getText());
 						pr.setString(2, nmbarang.getText());
@@ -187,6 +189,10 @@ public class dataBarang extends JFrame{
 						pr.setString(6, txTgl.getText());
 						pr.setString(7, suplier.getText());
 						pr.setString(8, txKet.getText());
+						int a =Integer.parseInt(hrgjual.getText());
+						int b =Integer.parseInt(hrgbeli.getText());
+						int c =Integer.parseInt(stokbrang.getText());
+						pr.setString(9,String.valueOf((a-b)*c));
 						pr.executeUpdate();
 						JOptionPane.showMessageDialog(null, "Data Berhasil di Input","Pesan",JOptionPane.INFORMATION_MESSAGE);
 						tampilTabel();
@@ -204,7 +210,7 @@ public class dataBarang extends JFrame{
 						try {
 							Class.forName("com.mysql.jdbc.Driver").newInstance();
 							Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
-							String sql = "update barang set namabarang=?, hrgjual=?, hrgbeli=?, stock=?, tgl=?, suplier=?,ket=? where kodebarang=?";
+							String sql = "update barang set namabarang=?, hrgjual=?, hrgbeli=?, stock=?, tgl=?, suplier=?,ket=?,untung=? where kodebarang=?";
 							PreparedStatement pr = connection.prepareStatement(sql);
 							pr.setString(1, nmbarang.getText());
 							pr.setString(2, hrgjual.getText());
@@ -213,7 +219,13 @@ public class dataBarang extends JFrame{
 							pr.setString(5, txTgl.getText());
 							pr.setString(6, suplier.getText());
 							pr.setString(7, txKet.getText());
-							pr.setString(8, kdbarang.getText());
+							int a =Integer.parseInt(hrgjual.getText());
+							int b =Integer.parseInt(hrgbeli.getText());
+							int c =Integer.parseInt(stokbrang.getText());
+							pr.setString(8,String.valueOf(a));
+							pr.setString(9, kdbarang.getText());
+							
+
 							pr.executeUpdate();
 							pr.close();
 							connection.close();
@@ -260,7 +272,6 @@ public class dataBarang extends JFrame{
 			hrgjual.setText("");
 			hrgbeli.setText("");
 			stokbrang.setText("");
-			//txTgl.setText("");
 			suplier.setText("");
 			txKet.setText("");
 		}
@@ -287,7 +298,8 @@ public class dataBarang extends JFrame{
 					obj [3] = rs.getString(4);
 					obj [4] = rs.getString(5);
 					obj [5] = rs.getString(7);
-					obj [6] = rs.getString(8);					
+					obj [6] = rs.getString(8);
+					obj [7] = rs.getString(9);
 					model.addRow(obj);
 					
 				}
@@ -379,10 +391,6 @@ public class dataBarang extends JFrame{
 			tc6 = table.getColumnModel().getColumn(5);
 			tc7 = table.getColumnModel().getColumn(6);
 			
-			//end tabel
-			
-			//method setTinggi()
-			
 			
 			ltgl.setBounds(700, 70, 100, 20);
 			txTgl.setBounds(800, 70, 200, 25);
@@ -401,13 +409,6 @@ public class dataBarang extends JFrame{
 			txKet.setBorder(null);
 			txKet.setWrapStyleWord(true);
 			txKet.setLineWrap(true);
-			/*flatbut.setBounds(1050, 300, 100, 30);
-			flatbut.setForeground(Color.WHITE);
-			flatbut.setBackground(d);
-			flatbut.setBorder(null);
-			flatbut.setBorderPainted(false);
-			flatbut.setFocusPainted(false);*/
-			
 			
 			hapus.setBounds(900, 600, 100, 30);
 			hapus.setForeground(Color.WHITE);
@@ -454,12 +455,11 @@ public class dataBarang extends JFrame{
 				public void mouseClicked(MouseEvent e) {
 					kasirScreen ah = new kasirScreen();
 					ah.kom();
+					ah.act();
 					dispose();
 				}
 				
 			});
-			//getContentPane().add(appName);
-			//appName.setBounds(0,0,75,75);
 			
 			//stock button
 			getContentPane().add(stock);
@@ -489,11 +489,31 @@ public class dataBarang extends JFrame{
 				public void mouseClicked(MouseEvent arg0) {
 					reportScreen ad= new reportScreen();
 					ad.kom();
+					ad.act();
 					dispose();
 				}
 				
 			});
+			//about
+			getContentPane().add(setting);
+			setting.setBounds(0, 300, 100, 100);
+			setting.setOpaque(false);
+			setting.setFocusPainted(false);
+			setting.setContentAreaFilled(false);
+			setting.setBorder(null);
+			setting.setIcon(new ImageIcon("images/1/setting.png"));
+			setting.setRolloverIcon(new ImageIcon("images/2/setting.png"));
+			setting.setPressedIcon(new ImageIcon("images/3/setting.png"));
+			setting.addMouseListener(new MouseAdapter() {
 
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					tentang ad= new tentang();
+					ad.kom();
+					dispose();
+				}
+				
+			});
 			getContentPane().add(quit);
 			quit.setBounds(0, 570, 100, 100);
 			quit.setOpaque(false);
@@ -569,25 +589,24 @@ public class dataBarang extends JFrame{
 						int j=10*k;
 						y = 100+j;
 						g.setFont(new Font("Dialog", 0, 8));
-						String dataNim= model.getValueAt(i, 0).toString();
-						String dataNama=model.getValueAt(i, 1).toString();
-						String dataGender= model.getValueAt(i, 2).toString();
-						String dataJurusan = model.getValueAt(i, 3).toString();
-						String dataKelas=model.getValueAt(i, 4).toString();
-						String dataTahun= model.getValueAt(i, 5).toString();
-						String dataHp= model.getValueAt(i, 6).toString();
+						String v1= model.getValueAt(i, 0).toString();
+						String v2=model.getValueAt(i, 1).toString();
+						String v3= model.getValueAt(i, 2).toString();
+						String v4 = model.getValueAt(i, 3).toString();
+						String v5=model.getValueAt(i, 4).toString();
+						String v6= model.getValueAt(i, 5).toString();
+						String v7= model.getValueAt(i, 6).toString();
 						
-						g.drawString(dataNim, 30, y);
-						g.drawString(dataNama, 100, y);
-						g.drawString(dataGender, 280, y);
-						g.drawString(dataJurusan, 330, y);
-						g.drawString(dataKelas, 400, y);
-						g.drawString(dataTahun, 470, y);
-						g.drawString(dataHp, 510, y);
+						g.drawString(v1, 30, y);
+						g.drawString(v2, 100, y);
+						g.drawString(v3, 280, y);
+						g.drawString(v4, 330, y);
+						g.drawString(v5, 400, y);
+						g.drawString(v6, 470, y);
+						g.drawString(v7, 510, y);
 
 					}
 					
-					//BERHENTI
 				}
 				printerJob.end();
 				printerJob.end();

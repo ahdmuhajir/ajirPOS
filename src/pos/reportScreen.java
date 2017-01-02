@@ -3,6 +3,10 @@ package pos;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.PrintJob;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -62,8 +67,8 @@ public class reportScreen extends JFrame{
 	String hostname = "Unknown";
 	
 	// kasir screen
-	JLabel ldari = new JLabel("Dari");
-	JLabel lsampai = new JLabel("Sampai");
+	JLabel ldari = new JLabel("Dari Tanggal");
+	JLabel lsampai = new JLabel("Sampai Tanggal");
 	JLabel lkodebarang = new JLabel("Kode Barang");
 	JLabel totalharga = new JLabel("Total");
 	JLabel bayar = new JLabel("Bayar");
@@ -82,17 +87,14 @@ public class reportScreen extends JFrame{
 	JButton flatbut= new JButton("Bayar",new ImageIcon("images/btc.png"));
 	JButton flatcancel= new JButton("Reset",new ImageIcon("images/cancel.png"));
 	JButton flatBaru= new JButton("Baru",new ImageIcon("images/new.png"));
-	JButton flatPrint= new JButton("Print",new ImageIcon("images/print.png"));
+	JButton flatPrint= new JButton("Print",new ImageIcon("images/print.pngg"));
 	
 	
 	// Tabel tabel 
-	String header [] = {"No","Tanggal","Invoice","Total","Bayar","Kembali"};
-	String data [][] = {{"1",dateFormat.format(date),getInpoice(),"23000","25000","3000"},
-						{"2",dateFormat.format(date),getInpoice(),"10","5000","50000"},
-						{"3",dateFormat.format(date),getInpoice(),"3","1200","50200"}
-	};
+	String header [] = {"Tanggal","Invoice","Total","Bayar","Kembali"};
 	
-	DefaultTableModel model = new DefaultTableModel(data,header);
+	
+	DefaultTableModel model = new DefaultTableModel(null,header);
 	JTable table = new JTable(model);
 	
 	JScrollPane pane = new JScrollPane(table);
@@ -101,7 +103,6 @@ public class reportScreen extends JFrame{
 	TableColumn tc3 = new TableColumn();
 	TableColumn tc4 = new TableColumn();
 	TableColumn tc5 = new TableColumn();
-	TableColumn tc6 = new TableColumn();
 	
 	Dimension dim = new Dimension(15, 2);
 	
@@ -114,6 +115,7 @@ public class reportScreen extends JFrame{
 		setResizable(false);
 		setVisible(true);
 		setTitle("Aplikasi Point Of Sale");
+		
 
 	}
 	
@@ -167,7 +169,6 @@ public class reportScreen extends JFrame{
 		tc3 = table.getColumnModel().getColumn(2);
 		tc4 = table.getColumnModel().getColumn(3);
 		tc5 = table.getColumnModel().getColumn(4);
-		tc6 = table.getColumnModel().getColumn(5);
 		
 		
 		//end tabel
@@ -175,14 +176,14 @@ public class reportScreen extends JFrame{
 		//method setTinggi()
 		
 		
-		ldari.setBounds(200, 100, 80, 25);
-		txdari.setBounds(250, 100, 200, 25);
+		ldari.setBounds(250, 100, 80, 25);
+		txdari.setBounds(350, 100, 200, 25);
 		txdari.setBorder(null);
 	
 		//txidTransaksi.setText(getInpoice());
 		txdari.setHorizontalAlignment(JTextField.CENTER);
-		lsampai.setBounds(500, 100, 80, 25);
-		txsampai.setBounds(560, 100, 200, 25);
+		lsampai.setBounds(600, 100, 100, 25);
+		txsampai.setBounds(720, 100, 200, 25);
 		txsampai.setBorder(null);
 		//txTgl.setText(dateFormat.format(date));
 		txsampai.setAlignmentX(CENTER_ALIGNMENT);
@@ -226,6 +227,7 @@ public class reportScreen extends JFrame{
 			public void mouseClicked(MouseEvent e) {
 				kasirScreen ah = new kasirScreen();
 				ah.kom();
+				ah.act();
 				dispose();
 			}
 			
@@ -265,7 +267,26 @@ public class reportScreen extends JFrame{
 		report.setIcon(new ImageIcon("images/1/report-a.png"));
 		report.setRolloverIcon(new ImageIcon("images/2/report.png"));
 		report.setPressedIcon(new ImageIcon("images/3/report.png"));
-		
+		//about
+				getContentPane().add(setting);
+				setting.setBounds(0, 300, 100, 100);
+				setting.setOpaque(false);
+				setting.setFocusPainted(false);
+				setting.setContentAreaFilled(false);
+				setting.setBorder(null);
+				setting.setIcon(new ImageIcon("images/1/setting.png"));
+				setting.setRolloverIcon(new ImageIcon("images/2/setting.png"));
+				setting.setPressedIcon(new ImageIcon("images/3/setting.png"));
+				setting.addMouseListener(new MouseAdapter() {
+
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						tentang ad= new tentang();
+						ad.kom();
+						dispose();
+					}
+					
+				});
 		getContentPane().add(quit);
 		quit.setBounds(0, 570, 100, 100);
 		quit.setOpaque(false);
@@ -297,47 +318,151 @@ public class reportScreen extends JFrame{
 		
 		//getContentPane().add(bg);
 		//bg.setBounds(0, 0, 1200, 700);
-		
+		tampilTabel();
 	
 	}
+	public void bersih(){
+		int bbar=model.getRowCount();
+		for (int i = bbar-1; i >=0; i--) {
+			model.removeRow(i);
+		}
+		
+	}
 	public void act(){
+		flatPrint.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				cetakHasil();
+				
+			}
+		});
+		flatcancel.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				txdari.setText("");
+				txsampai.setText("");
+				int bbar=model.getRowCount();
+				for (int i = bbar-1; i >=0; i--) {
+					model.removeRow(i);
+				}
+				
+			}
+		});
 		tampilkan.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent arg0) {
-		
-						
-							String d = txsampai.getText();
-							String s = txdari.getText();
+				bersih();
 							try {
+								String s = txsampai.getText();
+								String d = txdari.getText();
 								Class.forName("com.mysql.jdbc.Driver");
 								Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
 								Statement statement = connection.createStatement();
-								String sql = "select * from barang WHERE tgl >='"+d+"' AND tgl <='"+s+"'";
+								String sql = "select tgl,inv,total,bayar,kembali from penjualan WHERE tgl >='"+d+"' AND tgl <='"+s+"'";
 								ResultSet rs= statement.executeQuery(sql);
 									while(rs.next()){
-										Object obj []=new Object[8];
+										Object obj []=new Object[5];
 										obj [0] = rs.getString(1);
 										obj [1] = rs.getString(2);
 										obj [2] = rs.getString(3);
 										obj [3] = rs.getString(4);
-										obj [4] = rs.getString(5);
-										obj [5] = rs.getString(7);
-										obj [6] = rs.getString(8);					
+										obj [4] = rs.getString(5);					
 										model.addRow(obj);
+										//JOptionPane.showMessageDialog(null, "Data Behasil Disimpan","Konfirmasi",JOptionPane.INFORMATION_MESSAGE);
 									}
 								}catch (Exception e) {
 									System.out.println(e);
 							}
 							
-					/*		String d = dari.getText();
-							String s = sampai.getText();
-							String sql = "select * from penjualan WHERE tgl >='"+d+"' AND tgl <='"+s+"'";
-							System.out.println("select * from Penjualan");
-					*/	}
+					}
 					
 				});
 		}
-	
+	public void tampilTabel(){
+		//hapusTable();
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/ajirpos","root","");
+			Statement statement = connection.createStatement();
+			String sql = "select * from penjualan";
+			ResultSet rs= statement.executeQuery(sql);
+			while(rs.next()){
+				
+				Object obj []=new Object[5];
+				obj [0] = rs.getString(2);
+				obj [1] = rs.getString(1);
+				obj [2] = rs.getString(3);
+				obj [3] = rs.getString(4);
+				obj [4] = rs.getString(5);					
+				model.addRow(obj);
+				
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+	void cetakHasil(){
+		int y=0;
+		Frame fr= new Frame();
+		PrintJob printerJob=fr.getToolkit().getPrintJob(fr,"Printing",null,null);
+		if(printerJob!=null){
+			Graphics g = printerJob.getGraphics();
+			if(g != null){
+				Image image = new ImageIcon("Gambar/logo.png").getImage();
+				g.setFont(new Font("Dialog", 1, 11));
+				g.drawString("LAPORAN PENJUALAN", 100, 40);
+				g.setFont(new Font("Dialog", 1, 10));
+				g.drawString("UD. MAJU MUNDUR", 100, 50);
+				g.setFont(new Font("Dialog", 1, 9));
+				g.drawString(date.toString(), 100, 60);
+				g.setFont(new Font("Dialog", 1, 9));
+				g.drawString(date.toString(), 100, 60);
+				
+				//untukk NAMA KOLOM TABEL
+				String kodebarang = table.getColumnName(0);
+				String namabarang=table.getColumnName(1);
+				String hrgjual= table.getColumnName(2);
+				String hrgbeli=table.getColumnName(3);
+				String stock= table.getColumnName(4);
+				
+				
+				g.setFont(new Font("Dialog", 1, 8));
+				g.drawString(kodebarang, 30, 100);
+				g.drawString(namabarang, 130, 100);
+				g.drawString(hrgjual, 280, 100);
+				g.drawString(hrgbeli, 330, 100);
+				g.drawString(stock, 400, 100);
+				g.drawLine(30, 103, 550, 103);
+				
+				//untuk data tabel
+				int n = model.getRowCount();
+				for (int i = 0; i < n; i++) {
+					int k =i+2;
+					int j=10*k;
+					y = 100+j;
+					g.setFont(new Font("Dialog", 0, 8));
+					String dataNim= model.getValueAt(i, 0).toString();
+					String dataNama=model.getValueAt(i, 1).toString();
+					String dataGender= model.getValueAt(i, 2).toString();
+					String dataJurusan = model.getValueAt(i, 3).toString();
+					String dataKelas=model.getValueAt(i, 4).toString();
+					
+					
+					g.drawString(dataNim, 30, y);
+					g.drawString(dataNama, 130, y);
+					g.drawString(dataGender, 280, y);
+					g.drawString(dataJurusan, 330, y);
+					g.drawString(dataKelas, 400, y);
+					
+
+				}
+				
+				//BERHENTI
+			}
+			printerJob.end();
+			printerJob.end();
+		}
+	}
 	public static void main(String[] args) {
 		reportScreen anu = new reportScreen();
 		anu.kom();
